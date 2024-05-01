@@ -13,4 +13,6 @@ module org.example.putscanner {
 
     opens org.example.putscanner to javafx.fxml;
     exports org.example.putscanner;
+    exports org.example.putscanner.fxmlControllers;
+    opens org.example.putscanner.fxmlControllers to javafx.fxml;
 }

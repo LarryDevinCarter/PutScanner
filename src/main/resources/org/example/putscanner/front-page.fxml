@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Button?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.putscanner.FrontPageController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.putscanner.fxmlControllers.FrontPageController">
    <children>
       <MenuBar>
         <menus>
@@ -45,12 +45,19 @@
             </TableView>
          </center>
          <left>
-            <TreeView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            <TreeView fx:id="stockListTree" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <contextMenu>
+                  <ContextMenu>
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                    </items>
+                  </ContextMenu>
+               </contextMenu></TreeView>
          </left>
          <top>
             <HBox spacing="10.0" BorderPane.alignment="CENTER">
                <children>
-                  <MenuButton mnemonicParsing="false" text="List" />
+                  <MenuButton fx:id="stockListDropDownMenu" mnemonicParsing="false" text="List" />
                   <TextField promptText="Stock Ticker" />
                   <Button mnemonicParsing="false" text="Add" />
                   <Region HBox.hgrow="ALWAYS" />
