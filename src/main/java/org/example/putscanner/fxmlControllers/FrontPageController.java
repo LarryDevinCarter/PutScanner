@@ -15,6 +15,8 @@ public class FrontPageController implements Initializable{
     public MenuButton stockListDropDownMenu;
     @FXML
     public TreeView<String> stockListTree;
+    @FXML
+    public TextField stockTickerTextField;
 
     @FXML
     public void fileAddNewListClicked() throws IOException {
@@ -41,9 +43,28 @@ public class FrontPageController implements Initializable{
     public  void addDropDownMenuAndTreeView(String text){
 
         MenuItem menuItem = new MenuItem(text);
+        menuItem.setOnAction(e -> stockListDropDownMenu.setText(menuItem.getText()));
         stockListDropDownMenu.getItems().add(menuItem);
         TreeItem<String> treeItem = new TreeItem<>(text);
         stockListTree.getRoot().getChildren().add(treeItem);
+
+    }
+
+    @FXML
+    public void addButtonClicked() {
+
+        TreeItem<String> treeItem = new TreeItem<>(stockTickerTextField.getText());
+
+        for (TreeItem<String> list : stockListTree.getRoot().getChildren()) {
+
+            if (list.getValue().equals(stockListDropDownMenu.getText())) {
+
+                list.getChildren().add(treeItem);
+                break;
+
+            }
+
+        }
 
     }
 

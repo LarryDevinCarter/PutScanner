@@ -58,8 +58,8 @@
             <HBox spacing="10.0" BorderPane.alignment="CENTER">
                <children>
                   <MenuButton fx:id="stockListDropDownMenu" mnemonicParsing="false" text="List" />
-                  <TextField promptText="Stock Ticker" />
-                  <Button mnemonicParsing="false" text="Add" />
+                  <TextField fx:id="stockTickerTextField" promptText="Stock Ticker" />
+                  <Button mnemonicParsing="false" onAction="#addButtonClicked" text="Add" />
                   <Region HBox.hgrow="ALWAYS" />
                   <Button mnemonicParsing="false" text="Scan" />
                </children>
