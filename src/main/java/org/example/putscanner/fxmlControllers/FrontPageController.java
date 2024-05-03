@@ -74,7 +74,7 @@ public class FrontPageController implements Initializable{
     }
 
     @FXML
-    public void scanButtonClicked() throws FindFailed, InterruptedException {
+    public void scanButtonClicked() throws FindFailed {
 
         ScreenRegulator screenRegulator = new ScreenRegulator();
         Set<String> stocksToScan = new HashSet<>();
