@@ -3,14 +3,18 @@ package org.example.putscanner.fxmlControllers;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import org.example.putscanner.services.ScreenRegulator;
+import org.sikuli.script.FindFailed;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class FrontPageController implements Initializable{
-
+    //properties
     @FXML
     public MenuButton stockListDropDownMenu;
     @FXML
@@ -18,6 +22,7 @@ public class FrontPageController implements Initializable{
     @FXML
     public TextField stockTickerTextField;
 
+    //methods
     @FXML
     public void fileAddNewListClicked() throws IOException {
 
@@ -65,6 +70,28 @@ public class FrontPageController implements Initializable{
             }
 
         }
+
+    }
+
+    @FXML
+    public void scanButtonClicked() throws FindFailed, InterruptedException {
+
+        ScreenRegulator screenRegulator = new ScreenRegulator();
+        Set<String> stocksToScan = new HashSet<>();
+
+        for (TreeItem<String> list : stockListTree.getRoot().getChildren()) {
+
+            if (list.getValue().equals(stockListDropDownMenu.getText())) {
+
+                for (TreeItem<String> ticker : list.getChildren()) {
+
+                    stocksToScan.add(ticker.getValue());
+
+                }
+
+            } break;
+
+        } screenRegulator.getData(stocksToScan);
 
     }
 

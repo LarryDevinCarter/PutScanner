@@ -10,6 +10,8 @@ module org.example.putscanner {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires sikulixapi;
+    requires java.desktop;
 
     opens org.example.putscanner to javafx.fxml;
     exports org.example.putscanner;
