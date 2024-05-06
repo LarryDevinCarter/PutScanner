@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.effect.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.control.*?>
 <?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Button?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.putscanner.fxmlControllers.FrontPageController">
    <children>
@@ -58,8 +52,8 @@
             <HBox spacing="10.0" BorderPane.alignment="CENTER">
                <children>
                   <MenuButton fx:id="stockListDropDownMenu" mnemonicParsing="false" text="List" />
-                  <TextField fx:id="stockTickerTextField" promptText="Stock Ticker" />
-                  <Button mnemonicParsing="false" onAction="#addButtonClicked" text="Add" />
+                  <TextField fx:id="stockTickerTextField" onKeyPressed="#stockTickerTextFieldEnterPressed" promptText="Stock Ticker" />
+                  <Button mnemonicParsing="false" onAction="#addButtonClicked" onKeyPressed="#stockTickerTextFieldEnterPressed" text="Add" />
                   <Region HBox.hgrow="ALWAYS" />
                   <Button mnemonicParsing="false" onAction="#scanButtonClicked" text="Scan" />
                </children>

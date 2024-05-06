@@ -12,9 +12,14 @@ module org.example.putscanner {
     requires com.almasb.fxgl.all;
     requires sikulixapi;
     requires java.desktop;
+    requires org.postgresql.jdbc;
+    requires java.sql;
+    requires tess4j;
 
     opens org.example.putscanner to javafx.fxml;
     exports org.example.putscanner;
     exports org.example.putscanner.fxmlControllers;
     opens org.example.putscanner.fxmlControllers to javafx.fxml;
+    exports org.example.putscanner.jdbc;
+    opens org.example.putscanner.jdbc to javafx.fxml;
 }
