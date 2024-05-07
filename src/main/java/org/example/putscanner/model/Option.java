@@ -56,7 +56,9 @@ public class Option {
             this.myAsk = bid.add(new BigDecimal(".01"));
         }
         this.profitPerWeek = myAsk.divide(strike, 4, RoundingMode.UP);
-        this.prRating = profitPerWeek.multiply(strike.divide(this.ticker.getAverage(), 4, RoundingMode.UP));
+        if (this.ticker.getAverage() != null && !this.ticker.getAverage().equals(new BigDecimal("0.00"))) {
+            this.prRating = profitPerWeek.multiply(strike.divide(this.ticker.getAverage(), 4, RoundingMode.UP));
+        }
     }
 
     public Ticker getTicker() {

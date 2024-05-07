@@ -27,14 +27,22 @@ public class TesseractService {
     //methods
     public List<Option> createStockData(Ticker ticker) throws TesseractException {
 
+        tesseract.setPageSegMode(6);
         List<Option> options = new ArrayList<>();
         String imagePath = "C:\\Users\\larry\\workspace\\PutScanner\\src\\main\\resources\\capturedImages\\";
         tesseract.setDatapath(tesseractLanguageData.getAbsolutePath());
-        Ticker updatedTicker = updateTickerFromPriceTargets(new File(imagePath + ticker.getTicker() + "priceTargets.PNG"), ticker);
-        Date expirationDate = getDateFromImage(new File(imagePath + ticker.getTicker() + "date1.PNG"));
-        options.add(buildOption(updatedTicker, expirationDate, new File(imagePath + ticker.getTicker() + "option1.PNG")));
-        expirationDate = getDateFromImage(new File(imagePath + ticker.getTicker() + "date2.PNG"));
-        options.add(buildOption(updatedTicker, expirationDate, new File(imagePath + ticker.getTicker() + "option2.PNG")));
+        System.out.println("Symbol: " + ticker.getTicker());
+
+        if (new File(imagePath + ticker.getTicker() + "priceTargets.PNG").exists()) {
+
+            Ticker updatedTicker = updateTickerFromPriceTargets(new File(imagePath + ticker.getTicker() + "priceTargets.PNG"), ticker);
+            Date expirationDate = getDateFromImage(new File(imagePath + ticker.getTicker() + "date1.PNG"));
+            options.add(buildOption(updatedTicker, expirationDate, new File(imagePath + ticker.getTicker() + "option1.PNG")));
+            expirationDate = getDateFromImage(new File(imagePath + ticker.getTicker() + "date2.PNG"));
+            options.add(buildOption(updatedTicker, expirationDate, new File(imagePath + ticker.getTicker() + "option2.PNG")));
+
+        }
+
         return options;
 
     }
@@ -55,11 +63,18 @@ public class TesseractService {
             BufferedImage newImage = new BufferedImage(newWidth, newHeight, oldImage.getType());
             newImage.createGraphics().drawImage(scaledUpImage, 0, 0, null);
             String text = tesseract.doOCR(newImage);
-            System.out.println(text);
+            System.out.println("Option: " + text);
             String[] option = text.split("\\s+");
 
             for (int i = 0; i < option.length; i++) {
 
+                option[i] = option[i].replaceAll("A", "4");
+                option[i] = option[i].replaceAll("S", "5");
+                option[i] = option[i].replaceAll("\\?", "2");
+                option[i] = option[i].replaceAll("]", "1");
+                option[i] = option[i].replaceAll("a", "8");
+                option[i] = option[i].replaceAll("\\|", "1");
+                option[i] = option[i].replaceAll("--", "0.00");
                 option[i] = option[i].replaceAll("[^0-9.]", "");
 
                 if (option[i].contains(".")) {
@@ -67,7 +82,11 @@ public class TesseractService {
                     String firstHalf = option[i].substring(0, option[i].indexOf(".") + 1);
                     option[i] = firstHalf + option[i].substring(option[i].indexOf(".")).replaceAll("[^0-9]", "");
 
-                }
+                } else if (option[i].substring(0, 1).equals("0")) {
+
+                    option[i] = option[i].substring(0, 1) + "." + option[i].substring(1);
+
+                } System.out.println("Option " + i + ": " + option[i]);
 
             }
 
@@ -79,6 +98,7 @@ public class TesseractService {
         } catch (IOException e) {
 
             e.printStackTrace();
+            return null;
 
         } return new Option(updatedTicker, expirationDate, strike, bid, ask, last);
 
@@ -89,6 +109,7 @@ public class TesseractService {
         List<String> priceTargets = new ArrayList<>();
 
         try {
+
             BufferedImage oldImage = ImageIO.read(image);
             int newWidth = oldImage.getWidth() * 2;
             int newHeight = oldImage.getHeight() * 2;
@@ -96,34 +117,38 @@ public class TesseractService {
             BufferedImage newImage = new BufferedImage(newWidth, newHeight, oldImage.getType());
             newImage.createGraphics().drawImage(scaledUpImage, 0, 0, null);
             String text = tesseract.doOCR(image);
-            String[] priceTarget = text.split("\\s+");
+            System.out.println("Price Targets: " + text);
+            String[] priceTarget = text.split("\n");
 
             for (int i = 0; i < priceTarget.length; i++) {
 
-                if (priceTarget[i].contains(".")) {
+                if (!priceTarget[i].substring(priceTarget[i].lastIndexOf(" ") + 1).matches(".*\\d.*")) {
 
-                    priceTargets.add(priceTarget[i]);
+                    priceTarget[i] = priceTarget[i].substring(0, priceTarget[i].lastIndexOf(" "));
 
                 }
+                priceTarget[i] = priceTarget[i].substring(priceTarget[i].lastIndexOf(" ") + 1);
+                priceTarget[i] = priceTarget[i].replaceAll("s", "5");
+                priceTarget[i] = priceTarget[i].replaceAll(",", "");
+
+                if (!priceTarget[i].contains(".")) {
+
+                    priceTarget[i] = priceTarget[i].substring(0, priceTarget[i].length() - 2) + "." + priceTarget[i].substring(priceTarget[i].length() - 2);
+
+                } priceTargets.add(priceTarget[i]);
+                System.out.println("PT: " + priceTarget[i]);
 
             }
-            for (int i = 0; i < priceTargets.size(); i++) {
 
-                priceTargets.set(i, priceTargets.get(i).replaceAll("[^0-9.]", ""));
-                System.out.println(priceTargets.get(i));
-
-            }
             if (!priceTargets.isEmpty()) {
 
                 ticker.setHigh(new BigDecimal(priceTargets.getFirst()));
 
-            }
-            if (priceTargets.size() > 1) {
+            } if (priceTargets.size() > 1) {
 
                 ticker.setAverage(new BigDecimal(priceTargets.get(1)));
 
-            }
-            if (priceTargets.size() > 2) {
+            } if (priceTargets.size() > 2) {
 
                 ticker.setLow(new BigDecimal(priceTargets.get(2)));
 
@@ -138,9 +163,21 @@ public class TesseractService {
     }
 
     private Date getDateFromImage(File image) throws TesseractException {
-        String text = tesseract.doOCR(image);
-        String[] date = text.split("\\s+");
-        return new Date(Integer.parseInt(date[2]) + 100, getMonthNumber(date[1]), Integer.parseInt(date[0]));
+
+        try {
+
+            String text = tesseract.doOCR(image);
+            System.out.println("DATE: " + text);
+            String[] date = text.split("\\s+");
+            System.out.println("DATE FORMATTED: " + date[2] + " " + date[1] + " " + date[0]);
+            return new Date(Integer.parseInt(date[2]) + 100, getMonthNumber(date[1]), Integer.parseInt(date[0]));
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+
+            e.printStackTrace();
+
+        } return null;
+
     }
 
     private int getMonthNumber(String s) {

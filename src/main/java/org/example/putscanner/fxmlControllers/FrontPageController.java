@@ -14,7 +14,7 @@ import org.example.putscanner.jdbc.JdbcOption;
 import org.example.putscanner.jdbc.JdbcTicker;
 import org.example.putscanner.model.Option;
 import org.example.putscanner.model.Ticker;
-import org.example.putscanner.services.ScreenRegulator;
+import org.example.putscanner.services.SikuliService;
 import org.example.putscanner.services.TesseractService;
 import org.sikuli.script.FindFailed;
 
@@ -104,7 +104,7 @@ public class FrontPageController implements Initializable {
     @FXML
     public void scanButtonClicked() throws FindFailed, TesseractException {
 
-        ScreenRegulator screenRegulator = new ScreenRegulator();
+        SikuliService sikuliService = new SikuliService();
         TesseractService tesseractService = new TesseractService();
         Set<Ticker> stocksToScan = new HashSet<>();
 
@@ -121,7 +121,7 @@ public class FrontPageController implements Initializable {
 
             }
 
-        } screenRegulator.getImages(stocksToScan);
+        } sikuliService.getImages(stocksToScan);
         jdbcOption.deleteOptions();
         data.clear();
 
@@ -131,8 +131,12 @@ public class FrontPageController implements Initializable {
 
             for (Option option : tesseractService.createStockData(getTicker(ticker.getTicker()))) {
 
-                jdbcOption.addOption(option);
-                data.add(option);
+                if (option !=  null) {
+
+                    jdbcOption.addOption(option);
+                    data.add(option);
+
+                }
 
             }
 
