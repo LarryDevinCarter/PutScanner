@@ -1,6 +1,7 @@
 package org.example.putscanner.services;
 
 
+import org.example.putscanner.model.Ticker;
 import org.sikuli.script.*;
 
 import java.util.Set;
@@ -23,13 +24,12 @@ public class ScreenRegulator {
     }
 
     //methods
-    public void getData(Set<String> stocksToScan) throws FindFailed {
+    public void getImages(Set<Ticker> stocksToScan) throws FindFailed {
 
         Screen screen = new Screen();
 
-        for (String ticker : stocksToScan) {
+        for (Ticker ticker : stocksToScan) {
 
-            System.out.println(ticker);
             scanTicker(screen, ticker);
 
         }
@@ -37,7 +37,7 @@ public class ScreenRegulator {
 
     }
 
-    private void scanTicker(Screen screen, String ticker) throws FindFailed {
+    private void scanTicker(Screen screen, Ticker ticker) throws FindFailed {
 
         Match match;
         Region putOption;
@@ -46,30 +46,30 @@ public class ScreenRegulator {
         Region quarterPageRegion = new Region(0, 0, (screen.getBounds().width / 3) + 11, screen.getBounds().height / 2);
         quarterPageRegion.mouseMove(Happy_Hat.similar(.95));
         quarterPageRegion.click();
-        quarterPageRegion.type(ticker);
-        quarterPageRegion.wait(.25);
+        quarterPageRegion.type(ticker.getTicker());
+        quarterPageRegion.wait(.5);
         quarterPageRegion.type("\n");
         quarterPageRegion.mouseMove(OPTIONS_TAB.similar(.95));
         quarterPageRegion.click();
         //takes screenshots of options and their expiration dates
-        createAndSaveImage(screen, ticker + "date1.PNG", PUT_DATE1);
+        createAndSaveImage(screen, ticker.getTicker() + "date1.PNG", PUT_DATE1);
         match = quarterPageRegion.find(SEPARATOR_BAR.similar(.95));
         putOption = new Region(match.getTopLeft().getX() - 50, match.getTopLeft().getY() - 20,
                 350, 20);
-        createAndSaveImage(screen, ticker + "option1.PNG", putOption);
+        createAndSaveImage(screen, ticker.getTicker() + "option1.PNG", putOption);
         PUT_DATE1.click();
         PUT_DATE2.click();
-        createAndSaveImage(screen, ticker + "date2.PNG", PUT_DATE2);
+        createAndSaveImage(screen, ticker.getTicker() + "date2.PNG", PUT_DATE2);
         quarterPageRegion.wait(.25);
         match = quarterPageRegion.find(SEPARATOR_BAR.similar(.95));
         putOption = new Region(match.getTopLeft().getX() - 50, match.getTopLeft().getY() - 20,
                 350, 20);
-        createAndSaveImage(screen, ticker + "option2.PNG", putOption);
+        createAndSaveImage(screen, ticker.getTicker() + "option2.PNG", putOption);
         PUT_DATE2.click();
         //takes screenshots of ticker price targets
         quarterPageRegion.mouseMove(ANALYSIS_TAB.similar(.95));
         quarterPageRegion.click();
-        createAndSaveImage(screen, ticker + "priceTargets.PNG", ANALYSTS_PRICE_TARGET);
+        createAndSaveImage(screen, ticker.getTicker() + "priceTargets.PNG", ANALYSTS_PRICE_TARGET);
 
 
     }

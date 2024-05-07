@@ -1,5 +1,7 @@
 package org.example.putscanner.jdbc;
 
+import org.example.putscanner.model.Ticker;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -68,6 +70,62 @@ public class JdbcTicker {
 
         } return  allTickers;
 
+    }
+
+    public void updateTicker(Ticker ticker) {
+
+        try {
+
+            Connection connection = JdbcConnections.connect();
+            String sql = "UPDATE tickers SET high = ?, average = ?, low = ? WHERE ticker = ?;";
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+                preparedStatement.setObject(1, ticker.getHigh());
+                preparedStatement.setObject(2, ticker.getAverage());
+                preparedStatement.setObject(3, ticker.getLow());
+                preparedStatement.setObject(4, ticker.getTicker());
+                preparedStatement.executeUpdate();
+
+            } JdbcConnections.disconnect(connection);
+
+        } catch (SQLException e) {
+
+            System.out.println("Error connecting to the database: " + e.getMessage());
+
+        }
+
+    }
+
+    public static Ticker getTicker(String symbol) {
+
+        Ticker ticker = new Ticker(symbol);
+        try {
+
+            Connection connection = JdbcConnections.connect();
+            String sql = "SELECT * FROM tickers WHERE ticker = ?";
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+                preparedStatement.setObject(1, symbol);
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next()) {
+
+                    ticker.setHigh(resultSet.getBigDecimal("high"));
+                    ticker.setAverage(resultSet.getBigDecimal("average"));
+                    ticker.setLow(resultSet.getBigDecimal("low"));
+                    JdbcConnections.disconnect(connection);
+
+                }
+
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println("Error connecting to the database: " + e.getMessage());
+
+        } return  ticker;
     }
 
 }

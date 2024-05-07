@@ -1,26 +1,31 @@
 package org.example.putscanner.fxmlControllers;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import net.sourceforge.tess4j.TesseractException;
 import org.example.putscanner.jdbc.JdbcList;
+import org.example.putscanner.jdbc.JdbcOption;
 import org.example.putscanner.jdbc.JdbcTicker;
+import org.example.putscanner.model.Option;
+import org.example.putscanner.model.Ticker;
 import org.example.putscanner.services.ScreenRegulator;
 import org.example.putscanner.services.TesseractService;
 import org.sikuli.script.FindFailed;
 
+import java.math.BigDecimal;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 import static javafx.application.Platform.exit;
+import static org.example.putscanner.jdbc.JdbcTicker.getTicker;
 
-public class FrontPageController implements Initializable{
+public class FrontPageController implements Initializable {
     //properties
     @FXML
     public MenuButton stockListDropDownMenu;
@@ -28,8 +33,22 @@ public class FrontPageController implements Initializable{
     public TreeView<String> stockListTree;
     @FXML
     public TextField stockTickerTextField;
+    @FXML
+    public TableView<Option> optionTable;
+    @FXML
+    public TableColumn<Option, String> symbol;
+    @FXML
+    public TableColumn<Option, BigDecimal> prRating;
+    @FXML
+    public TableColumn<Option, BigDecimal> profitPerWeek;
+    @FXML
+    public TableColumn<Option, BigDecimal> strike;
+    @FXML
+    public TableColumn<Option, BigDecimal> ask;
     private JdbcList jdbcList = new JdbcList();
     private JdbcTicker jdbcTicker = new JdbcTicker();
+    private JdbcOption jdbcOption = new JdbcOption();
+    private ObservableList<Option> data = FXCollections.observableArrayList();
 
     //constructors
     public FrontPageController() {
@@ -83,10 +102,11 @@ public class FrontPageController implements Initializable{
     }
 
     @FXML
-    public void scanButtonClicked() throws FindFailed {
+    public void scanButtonClicked() throws FindFailed, TesseractException {
 
         ScreenRegulator screenRegulator = new ScreenRegulator();
-        Set<String> stocksToScan = new HashSet<>();
+        TesseractService tesseractService = new TesseractService();
+        Set<Ticker> stocksToScan = new HashSet<>();
 
         for (TreeItem<String> list : stockListTree.getRoot().getChildren()) {
 
@@ -94,13 +114,29 @@ public class FrontPageController implements Initializable{
 
                 for (TreeItem<String> ticker : list.getChildren()) {
 
-                    stocksToScan.add(ticker.getValue());
+                    Ticker newTicker = new Ticker(ticker.getValue());
+                    stocksToScan.add(newTicker);
 
                 } break;
 
             }
 
-        } screenRegulator.getData(stocksToScan);
+        } screenRegulator.getImages(stocksToScan);
+        jdbcOption.deleteOptions();
+        data.clear();
+
+        for (Ticker ticker : stocksToScan) {
+
+            jdbcTicker.updateTicker(ticker);
+
+            for (Option option : tesseractService.createStockData(getTicker(ticker.getTicker()))) {
+
+                jdbcOption.addOption(option);
+                data.add(option);
+
+            }
+
+        }
 
     }
 
@@ -108,7 +144,6 @@ public class FrontPageController implements Initializable{
 
         MenuItem menuItem = new MenuItem(text);
         menuItem.setOnAction(e -> stockListDropDownMenu.setText(menuItem.getText()));
-        System.out.println(stockListDropDownMenu);
         stockListDropDownMenu.getItems().add(menuItem);
         TreeItem<String> treeItem = new TreeItem<>(text);
         stockListTree.getRoot().getChildren().add(treeItem);
@@ -141,11 +176,17 @@ public class FrontPageController implements Initializable{
         TreeItem<String> root = new TreeItem<>("Root");
         stockListTree.setRoot(root);
         stockListTree.setShowRoot(false);
-        addStatingDataFromDatabase();
+        symbol.setCellValueFactory(new PropertyValueFactory<Option, String>("symbol"));
+        prRating.setCellValueFactory(new PropertyValueFactory<Option, BigDecimal>("prRating"));
+        profitPerWeek.setCellValueFactory(new PropertyValueFactory<Option, BigDecimal>("profitPerWeek"));
+        strike.setCellValueFactory(new PropertyValueFactory<Option,BigDecimal>("strike"));
+        ask.setCellValueFactory(new PropertyValueFactory<Option, BigDecimal>("myAsk"));
+        optionTable.setItems(data);
+        addStatingDataFromDatabase(data);
 
     }
 
-    private void addStatingDataFromDatabase() {
+    private void addStatingDataFromDatabase(ObservableList<Option> data) {
 
         Set<String> allLists = jdbcList.getAllLists();
 
@@ -160,7 +201,8 @@ public class FrontPageController implements Initializable{
 
             }
 
-        }
+        } List<Option> allOptions = jdbcOption.getAllOptions();
+        data.addAll(allOptions);
 
     }
 

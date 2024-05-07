@@ -22,4 +22,5 @@ module org.example.putscanner {
     opens org.example.putscanner.fxmlControllers to javafx.fxml;
     exports org.example.putscanner.jdbc;
     opens org.example.putscanner.jdbc to javafx.fxml;
+    opens org.example.putscanner.model to javafx.base;
 }

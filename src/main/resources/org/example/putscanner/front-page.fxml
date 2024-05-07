@@ -5,7 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.putscanner.fxmlControllers.FrontPageController">
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.putscanner.fxmlControllers.FrontPageController">
    <children>
       <MenuBar>
         <menus>
@@ -22,7 +22,7 @@
           </Menu>
         </menus>
       </MenuBar>
-      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0">
+      <BorderPane>
          <bottom>
             <HBox BorderPane.alignment="CENTER">
                <children>
@@ -31,15 +31,18 @@
             </HBox>
          </bottom>
          <center>
-            <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <TableView fx:id="optionTable" BorderPane.alignment="CENTER">
                <columns>
-                  <TableColumn prefWidth="75.0" text="C1" />
-                  <TableColumn prefWidth="75.0" text="C2" />
+                  <TableColumn fx:id="symbol" prefWidth="75.0" text="Symbol" />
+                  <TableColumn fx:id="prRating" prefWidth="75.0" text="P/R Rating" />
+                  <TableColumn fx:id="profitPerWeek" prefWidth="75.0" text="Profit/Week" />
+                  <TableColumn fx:id="strike" prefWidth="75.0" text="Strike" />
+                  <TableColumn fx:id="ask" prefWidth="75.0" text="Ask" />
                </columns>
             </TableView>
          </center>
          <left>
-            <TreeView fx:id="stockListTree" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <TreeView fx:id="stockListTree" BorderPane.alignment="CENTER">
                <contextMenu>
                   <ContextMenu>
                     <items>
