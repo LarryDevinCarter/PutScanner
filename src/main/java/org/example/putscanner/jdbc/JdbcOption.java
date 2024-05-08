@@ -3,6 +3,7 @@ package org.example.putscanner.jdbc;
 import org.example.putscanner.model.Option;
 import org.example.putscanner.model.Ticker;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -76,7 +77,7 @@ public class JdbcOption {
 
                 while (resultSet.next()) {
 
-                    Option option = new Option(resultSet.getString("ticker"), resultSet.getDate("expiration"), resultSet.getBigDecimal("strike"), resultSet.getBigDecimal("bid"), resultSet.getBigDecimal("ask"), resultSet.getBigDecimal("last"));
+                    Option option = new Option(resultSet.getString("ticker"), resultSet.getDate("expiration"), new BigDecimal(resultSet.getString("strike").replaceAll("[,$]", "")), new BigDecimal(resultSet.getString("bid").replaceAll("[,$]", "")), new BigDecimal(resultSet.getString("ask").replaceAll("[,$]", "")), new BigDecimal(resultSet.getString("last").replaceAll("[,$]", "")));
                     allOptions.add(option);
 
                 } JdbcConnections.disconnect(connection);
