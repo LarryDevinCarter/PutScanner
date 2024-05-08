@@ -181,11 +181,13 @@ public class FrontPageController implements Initializable {
         stockListTree.setShowRoot(false);
         symbol.setCellValueFactory(new PropertyValueFactory<Option, String>("symbol"));
         prRating.setCellValueFactory(new PropertyValueFactory<Option, BigDecimal>("prRating"));
+        prRating.setSortType(TableColumn.SortType.DESCENDING);
         profitPerWeek.setCellValueFactory(new PropertyValueFactory<Option, BigDecimal>("profitPerWeek"));
         strike.setCellValueFactory(new PropertyValueFactory<Option,BigDecimal>("strike"));
         ask.setCellValueFactory(new PropertyValueFactory<Option, BigDecimal>("myAsk"));
         optionTable.setItems(data);
         addStatingDataFromDatabase(data);
+        optionTable.getSortOrder().add(prRating);
 
     }
 

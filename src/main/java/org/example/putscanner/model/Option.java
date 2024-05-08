@@ -3,6 +3,11 @@ package org.example.putscanner.model;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+
 import org.example.putscanner.jdbc.JdbcTicker;
 import javafx.beans.property.*;
 
@@ -36,8 +41,8 @@ public class Option {
         } else {
             this.myAsk = bid.add(new BigDecimal(".01"));
         }
-        this.profitPerWeek = myAsk.divide(strike, 4, RoundingMode.UP);
-        this.prRating = profitPerWeek.multiply(strike.divide(ticker.getAverage(), 4, RoundingMode.UP));
+        this.profitPerWeek = myAsk.divide(strike, 4, RoundingMode.UP).divide(new BigDecimal(ChronoUnit.WEEKS.between(LocalDate.now(), this.expiration.toLocalDate()) + 1), 4, RoundingMode.UP);
+        this.prRating = profitPerWeek.multiply(new BigDecimal(1).subtract(strike.divide(ticker.getAverage(), 4, RoundingMode.UP)));
     }
 
     public Option(String ticker, Date expiration, BigDecimal strike, BigDecimal bid, BigDecimal ask, BigDecimal last) {
@@ -55,9 +60,9 @@ public class Option {
         } else {
             this.myAsk = bid.add(new BigDecimal(".01"));
         }
-        this.profitPerWeek = myAsk.divide(strike, 4, RoundingMode.UP);
+        this.profitPerWeek = myAsk.divide(strike, 4, RoundingMode.UP).divide(new BigDecimal(ChronoUnit.WEEKS.between(LocalDate.now(), this.expiration.toLocalDate()) + 1), 4, RoundingMode.UP);
         if (this.ticker.getAverage() != null && !this.ticker.getAverage().equals(new BigDecimal("0.00"))) {
-            this.prRating = profitPerWeek.multiply(strike.divide(this.ticker.getAverage(), 4, RoundingMode.UP));
+            this.prRating = profitPerWeek.multiply(new BigDecimal(1).subtract(strike.divide(this.ticker.getAverage(), 4, RoundingMode.UP)));
         }
     }
 

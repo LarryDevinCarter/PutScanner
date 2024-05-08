@@ -53,7 +53,7 @@ public class SikuliService {
             quarterPageRegion.mouseMove(Happy_Hat.similar(.95));
             quarterPageRegion.click();
             quarterPageRegion.type(ticker.getTicker());
-            quarterPageRegion.wait(.5);
+            quarterPageRegion.wait(.6);
             quarterPageRegion.type("\n");
             quarterPageRegion.mouseMove(OPTIONS_TAB.similar(.95));
             quarterPageRegion.click();

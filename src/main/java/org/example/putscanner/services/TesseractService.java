@@ -27,7 +27,11 @@ public class TesseractService {
     //methods
     public List<Option> createStockData(Ticker ticker) throws TesseractException {
 
+        List<String> configs = new ArrayList<>();
+        configs.add("bazaar");
         tesseract.setPageSegMode(6);
+        tesseract.setOcrEngineMode(3);
+        tesseract.setConfigs(configs);
         List<Option> options = new ArrayList<>();
         String imagePath = "C:\\Users\\larry\\workspace\\PutScanner\\src\\main\\resources\\capturedImages\\";
         tesseract.setDatapath(tesseractLanguageData.getAbsolutePath());
@@ -35,10 +39,15 @@ public class TesseractService {
 
         if (new File(imagePath + ticker.getTicker() + "priceTargets.PNG").exists()) {
 
+            tesseract.setVariable("tessedit_char_whitelist", "0123456789. ");
             Ticker updatedTicker = updateTickerFromPriceTargets(new File(imagePath + ticker.getTicker() + "priceTargets.PNG"), ticker);
+            tesseract.setVariable("tessedit_char_whitelist", "0123456789ADFJMNOSabceglnoprtuvy ");
             Date expirationDate = getDateFromImage(new File(imagePath + ticker.getTicker() + "date1.PNG"));
+            tesseract.setVariable("tessedit_char_whitelist", "0123456789.- ");
             options.add(buildOption(updatedTicker, expirationDate, new File(imagePath + ticker.getTicker() + "option1.PNG")));
+            tesseract.setVariable("tessedit_char_whitelist", "0123456789ADFJMNOSabceglnoprtuvy ");
             expirationDate = getDateFromImage(new File(imagePath + ticker.getTicker() + "date2.PNG"));
+            tesseract.setVariable("tessedit_char_whitelist", "0123456789.- ");
             options.add(buildOption(updatedTicker, expirationDate, new File(imagePath + ticker.getTicker() + "option2.PNG")));
 
         }
@@ -91,7 +100,16 @@ public class TesseractService {
             }
 
             strike = new BigDecimal(option[0]);
-            bid = new BigDecimal(option[1]);
+
+            if (strike.equals(new BigDecimal(25))) {
+
+                strike = new BigDecimal("2.5");
+
+            } if (strike.equals(new BigDecimal(75))) {
+
+                strike = new BigDecimal("7.5");
+
+            } bid = new BigDecimal(option[1]);
             ask = new BigDecimal(option[2]);
             last = new BigDecimal(option[3]);
 
@@ -99,6 +117,11 @@ public class TesseractService {
 
             e.printStackTrace();
             return null;
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+
+            last = new BigDecimal("0.00");
+            return new Option(updatedTicker, expirationDate, strike, bid, ask, last);
 
         } return new Option(updatedTicker, expirationDate, strike, bid, ask, last);
 
@@ -126,10 +149,13 @@ public class TesseractService {
 
                     priceTarget[i] = priceTarget[i].substring(0, priceTarget[i].lastIndexOf(" "));
 
-                }
-                priceTarget[i] = priceTarget[i].substring(priceTarget[i].lastIndexOf(" ") + 1);
+                } if (priceTarget[i].endsWith(".")) {
+
+                    priceTarget[i] = priceTarget[i].substring(0, priceTarget[i].length() - 1);
+
+                } priceTarget[i] = priceTarget[i].substring(priceTarget[i].lastIndexOf(" ") + 1);
                 priceTarget[i] = priceTarget[i].replaceAll("s", "5");
-                priceTarget[i] = priceTarget[i].replaceAll(",", "");
+                priceTarget[i] = priceTarget[i].replaceAll("[^0-9.]", "");
 
                 if (!priceTarget[i].contains(".")) {
 
