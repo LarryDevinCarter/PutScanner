@@ -36,6 +36,7 @@
                   <TableColumn fx:id="symbol" prefWidth="75.0" text="Symbol" />
                   <TableColumn fx:id="prRating" prefWidth="75.0" text="P/R Rating" />
                   <TableColumn fx:id="profitPerWeek" prefWidth="75.0" text="Profit/Week" />
+                  <TableColumn fx:id="expirationDate" prefWidth="75.0" text="Date" />
                   <TableColumn fx:id="strike" prefWidth="75.0" text="Strike" />
                   <TableColumn fx:id="ask" prefWidth="75.0" text="Ask" />
                </columns>

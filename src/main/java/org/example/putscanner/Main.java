@@ -18,7 +18,7 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
 
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("front-page.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 624, 480);
+        Scene scene = new Scene(fxmlLoader.load(), 700, 480);
         stage.setTitle("Put Scanner");
         stage.setScene(scene);
         stage.show();

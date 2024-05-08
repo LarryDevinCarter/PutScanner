@@ -42,6 +42,8 @@ public class FrontPageController implements Initializable {
     @FXML
     public TableColumn<Option, BigDecimal> profitPerWeek;
     @FXML
+    public TableColumn<Option, String> expirationDate;
+    @FXML
     public TableColumn<Option, BigDecimal> strike;
     @FXML
     public TableColumn<Option, BigDecimal> ask;
@@ -139,7 +141,7 @@ public class FrontPageController implements Initializable {
 
             }
 
-        }
+        } optionTable.getSortOrder().add(prRating);
 
     }
 
@@ -183,6 +185,7 @@ public class FrontPageController implements Initializable {
         prRating.setCellValueFactory(new PropertyValueFactory<Option, BigDecimal>("prRating"));
         prRating.setSortType(TableColumn.SortType.DESCENDING);
         profitPerWeek.setCellValueFactory(new PropertyValueFactory<Option, BigDecimal>("profitPerWeek"));
+        expirationDate.setCellValueFactory(new PropertyValueFactory<Option, String>("expirationText"));
         strike.setCellValueFactory(new PropertyValueFactory<Option,BigDecimal>("strike"));
         ask.setCellValueFactory(new PropertyValueFactory<Option, BigDecimal>("myAsk"));
         optionTable.setItems(data);
