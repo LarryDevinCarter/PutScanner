@@ -127,15 +127,11 @@ public class FrontPageController implements Initializable {
 
         for (Ticker ticker : stocksToScan) {
 
-            System.out.println("High 1 year price target for " + ticker.getTicker() + " is " + ticker.getHigh());
-            System.out.println("Average 1 year price target for " + ticker.getTicker() + " is " + ticker.getAverage());
-            System.out.println("Low 1 year price target for " + ticker.getTicker() + " is " + ticker.getLow());
-            jdbcTicker.updateTicker(ticker);
-
             for (Option option : tesseractService.createStockData(getTicker(ticker.getTicker()))) {
 
                 if (option !=  null) {
 
+                    jdbcTicker.updateTicker(option.getTicker());
                     jdbcOption.addOption(option);
                     data.add(option);
 
